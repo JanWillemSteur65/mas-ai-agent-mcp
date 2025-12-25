@@ -1,0 +1,25 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: app
+spec:
+  to:
+    kind: Service
+    name: app
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: mcp-server
+spec:
+  to:
+    kind: Service
+    name: mcp-server
+  port:
+    targetPort: http
+  tls:
+    termination: edge

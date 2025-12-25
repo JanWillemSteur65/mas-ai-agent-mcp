@@ -1,0 +1,21 @@
+{
+  "ui": {},
+  "mcp": {
+    "url": "http://mcp-server:8081",
+    "enableTools": true
+  },
+  "maximo": {
+    "defaultTenant": "default",
+    "defaultSite": "BIKES",
+    "objectStructure": "mxapiasset"
+  },
+  "tenants": [
+    {
+      "id": "default",
+      "label": "Default Tenant",
+      "maximoBaseUrl": "https://example.manage.example.net/maximo",
+      "org": "",
+      "site": "BIKES"
+    }
+  ]
+}

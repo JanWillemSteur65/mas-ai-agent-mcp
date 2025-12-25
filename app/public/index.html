@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Maximo AI Agent</title>
+  <link rel="stylesheet" href="/app.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="nav">
+    <div class="brand">Maximo AI Agent</div>
+    <button data-nav="chat" class="active">Chat</button>
+    <button data-nav="settings">Settings</button>
+    <button data-nav="rest">REST Builder</button>
+    <button data-nav="trace">Trace</button>
+    <button data-nav="help">Help</button>
+    <div class="spacer"></div>
+    <div class="meta">OpenShift-ready · Carbon-style UI</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="left">
+        <div class="pill" id="pageTitle">AI Agent</div>
+        <div class="pill">Mode: <b id="modeLbl">AI/Maximo</b></div>
+      </div>
+      <div class="right">
+        <button class="btn" id="toggleTheme">Toggle Light/Dark</button>
+      </div>
+    </div>
+
+    <section data-page="chat" class="chatWrap">
+      <div class="card">
+        <h3>Predefined Maximo Prompts</h3>
+        <div class="body">
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1; display:flex; flex-direction:column;">
+        <h3>Conversation</h3>
+        <div class="body" style="flex:1; display:flex; flex-direction:column;">
+          <div class="chat" id="chat"></div>
+          <div class="composer">
+            <input id="prompt" placeholder="Ask the AI or run a Maximo prompt…"/>
+            <button class="btn primary" id="send">Send</button>
+            <button class="btn" id="clearChat">Clear</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-page="settings" class="grid hidden">
+      <div class="card">
+        <h3>AI Provider</h3>
+        <div class="body">
+          <div class="row">
+            <div class="field">
+              <label>Provider</label>
+              <select id="provider">
+                <option value="openai">OpenAI</option>
+                <option value="mistral">Mistral</option>
+                <option value="deepseek">DeepSeek</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Model</label>
+              <select id="model">
+                <option value="">(select model)</option>
+              </select>
+              <div class="meta" id="modelsNote"></div>
+            </div>
+            <div class="field">
+              <label>Temperature</label>
+              <input id="temp" type="number" step="0.1" min="0" max="2" value="0.7"/>
+            </div>
+          </div>
+          <div class="field" style="margin-top:10px;">
+            <label>System prompt</label>
+            <textarea id="system" placeholder="Optional system instructions..."></textarea>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn" id="refreshModels">Retrieve models</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>MCP Orchestration</h3>
+        <div class="body">
+          <div class="row">
+            <div class="field">
+              <label>MCP Server URL (internal recommended)</label>
+              <input id="mcpUrl" placeholder="http://mcp-server:8081"/>
+            </div>
+            <div class="field">
+              <label>Enable MCP tool orchestration</label>
+              <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+                <input id="mcpTools" type="checkbox"/>
+                <div class="meta">If enabled, AI mode can call MCP tools automatically.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Object Structure</label>
+              <input id="os" placeholder="mxapiasset"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Tenants Registry (stored in PVC)</h3>
+        <div class="body">
+          <div class="row">
+            <div class="field"><label>Tenant ID</label><input id="tenantId"/></div>
+            <div class="field"><label>Label</label><input id="tenantLabel"/></div>
+            <div class="field"><label>Maximo Base URL</label><input id="tenantUrl" placeholder="https://.../maximo"/></div>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <div class="field"><label>Org</label><input id="tenantOrg"/></div>
+            <div class="field"><label>Site</label><input id="tenantSite"/></div>
+            <div class="field" style="flex:0 0 140px; align-self:flex-end;">
+              <button class="btn primary" id="addTenant">Add / Update</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;" class="tableWrap">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Label</th><th>URL</th><th>Org</th><th>Site</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="tenantsBody"></tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:12px;">
+            <button class="btn primary" id="saveSettings">Save settings</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-page="rest" class="grid hidden">
+      <div class="card">
+        <h3>REST Builder</h3>
+        <div class="body">
+          <div class="meta">This baseline includes the backend endpoints; you can extend this page to match the original HTML builder tabs without changing backend URLs.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-page="trace" class="grid hidden">
+      <div class="card">
+        <h3>Trace</h3>
+        <div class="body">
+          <div class="meta">Trace output can be added by storing last requests in the backend and exposing /api/trace. This baseline keeps API compatibility while avoiding build-time dependencies.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-page="help" class="grid hidden">
+      <div class="card">
+        <h3>Help</h3>
+        <div class="body">
+          <p>This UI is a Carbon-style baseline that builds in restricted OpenShift clusters without npm downloads.</p>
+          <ul>
+            <li>Use <b>Settings</b> to select provider and retrieve models.</li>
+            <li>Set MCP URL to <code>http://mcp-server:8081</code> and enable orchestration.</li>
+            <li>Maximo REST uses <code>/maximo/api/os</code> via the MCP tools or direct API endpoint.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
